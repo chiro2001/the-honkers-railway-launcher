@@ -1,5 +1,5 @@
 use anime_launcher_sdk::anime_game_core::installer::downloader::Downloader;
-use anime_launcher_sdk::anime_game_core::minreq;
+use anime_launcher_sdk::anime_game_core::reqwest;
 
 use md5::{Md5, Digest};
 
@@ -17,7 +17,7 @@ pub fn get_uri() -> String {
 
 #[cached::proc_macro::cached(result)]
 pub fn get_background_info() -> anyhow::Result<Background> {
-    let json = serde_json::from_slice::<serde_json::Value>(minreq::get(get_uri()).send()?.as_bytes())?;
+    let json = serde_json::from_slice::<serde_json::Value>(reqwest::blocking::get(get_uri())?.bytes()?.as_ref())?;
 
     let uri = match json["data"]["adv"]["background"].as_str() {
         Some(uri) => uri.to_owned(),
